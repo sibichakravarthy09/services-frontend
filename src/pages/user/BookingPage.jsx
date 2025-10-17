@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { serviceService } from '../../services/serviceService';
@@ -14,11 +14,7 @@ const BookingPage = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    fetchService();
-  }, [id]);
-
-  const fetchService = async () => {
+  const fetchService = useCallback(async () => {
     try {
       const data = await serviceService.getServiceById(id);
       setService(data);
@@ -28,7 +24,11 @@ const BookingPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]); // Added navigate here as well
+
+  useEffect(() => {
+    fetchService();
+  }, [fetchService]); // useCallback ensures stable reference
 
   const handleBookingSubmit = async (bookingData) => {
     setSubmitting(true);

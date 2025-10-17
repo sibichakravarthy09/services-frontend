@@ -11,7 +11,7 @@ const Login = () => {
     password: '',
   });
   const [loading, setLoading] = useState(false);
-  const { login, isAdmin } = useAuth();
+  const { login } = useAuth(); // Removed isAdmin
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -28,7 +28,7 @@ const Login = () => {
     try {
       const userData = await login(formData);
       toast.success('Login successful!');
-      
+
       // Redirect based on role
       setTimeout(() => {
         if (userData.role === 'admin') {

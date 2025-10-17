@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { adminService } from '../../services/adminService';
 import Sidebar from '../../components/layout/Sidebar';
@@ -11,11 +11,8 @@ const ManageBookings = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState({ status: '', search: '' });
 
-  useEffect(() => {
-    fetchBookings();
-  }, [filter]);
-
-  const fetchBookings = async () => {
+  // Wrap fetchBookings in useCallback so it doesn't get recreated on every render
+  const fetchBookings = useCallback(async () => {
     try {
       setLoading(true);
       const data = await adminService.getAllBookings(filter);
@@ -25,7 +22,11 @@ const ManageBookings = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    fetchBookings();
+  }, [fetchBookings]); // now safe to include fetchBookings
 
   const handleStatusUpdate = async (id, status) => {
     try {

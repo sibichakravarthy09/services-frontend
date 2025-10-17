@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { serviceService } from '../../services/serviceService';
 import { useAuth } from '../../hooks/useAuth';
@@ -16,11 +16,7 @@ const ServiceDetails = () => {
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchServiceDetails();
-  }, [id]);
-
-  const fetchServiceDetails = async () => {
+  const fetchServiceDetails = useCallback(async () => {
     try {
       const data = await serviceService.getServiceById(id);
       setService(data);
@@ -30,7 +26,11 @@ const ServiceDetails = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
+
+  useEffect(() => {
+    fetchServiceDetails();
+  }, [fetchServiceDetails]);
 
   const handleBookNow = () => {
     if (!isAuthenticated()) {

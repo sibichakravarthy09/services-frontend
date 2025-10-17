@@ -1,6 +1,4 @@
-// src/pages/user/Services.jsx
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { serviceService } from '../../services/serviceService';
 import Loader from '../../components/common/Loader';
@@ -14,11 +12,7 @@ const Services = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('');
 
-  useEffect(() => {
-    fetchServices();
-  }, [selectedCategory]);
-
-  const fetchServices = async () => {
+  const fetchServices = useCallback(async () => {
     try {
       setLoading(true);
       const data = await serviceService.getAllServices(selectedCategory);
@@ -28,7 +22,11 @@ const Services = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    fetchServices();
+  }, [fetchServices]);
 
   if (loading) return <Loader fullScreen message="Loading services..." />;
 
